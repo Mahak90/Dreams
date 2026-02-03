@@ -5,9 +5,6 @@ import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
-import swaggerJSDoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
-
 const app = express();
 
 // ==========================================
@@ -15,9 +12,7 @@ const app = express();
 // ==========================================
 
 // Security Headers
-app.use(helmet({
-  contentSecurityPolicy: false, // Set to false if using external CDNs or Swagger
-}));
+app.use(helmet());
 
 // Compression for faster responses
 app.use(compression());
@@ -27,8 +22,8 @@ app.use(morgan('dev'));
 
 // Rate Limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200, // limit each IP to 200 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 200,
   message: {
     success: false,
     message: "Too many requests from this IP, please try again after 15 minutes"
@@ -48,65 +43,15 @@ app.use(
       "http://localhost:8080",
       "http://localhost:5173",
       "http://localhost:3001",
-      "http://localhost:3000",
-      "http://127.0.0.1:3001",
-      "http://127.0.0.1:3000"
+      "https://www.dreamschools.in",
+      "https://www.dreamschools.in/",
+      
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
-
-// ==========================================
-// API DOCUMENTATION (SWAGGER)
-// ==========================================
-
-const swaggerDefinition = {
-  openapi: "3.0.0",
-  info: {
-    title: "Dream School API - Premium Edition",
-    version: "1.1.0",
-    description: "High-performance API documentation for Dream School Management System",
-    contact: {
-      name: "API Support",
-      email: "support@dreamschool.com"
-    }
-  },
-  servers: [
-    {
-      url: "http://localhost:3000/api/v1",
-      description: "Local Development Server",
-    },
-  ],
-  components: {
-    securitySchemes: {
-      bearerAuth: {
-        type: "http",
-        scheme: "bearer",
-        bearerFormat: "JWT",
-      },
-      cookieAuth: {
-        type: "apiKey",
-        in: "cookie",
-        name: "refresh_token",
-      },
-    },
-  },
-  security: [{ bearerAuth: [] }],
-};
-
-const specs = swaggerJSDoc({
-  swaggerDefinition,
-  apis: ["./src/routes/*.js"],
-});
-
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs, {
-  swaggerOptions: {
-    persistAuthorization: true,
-  },
-  customCss: '.swagger-ui .topbar { display: none }', // Polishing Swagger UI
-}));
 
 // ==========================================
 // ROUTES
@@ -145,8 +90,7 @@ app.get("/", (req, res) => {
   res.status(200).json({
     status: "Healthy",
     message: "Dream School API is running",
-    version: "1.1.0",
-    docs: "/api-docs"
+    version: "1.1.0"
   });
 });
 
