@@ -8,13 +8,15 @@ import {
   getUsersByRole,
   getUsersBySchool,
   updateUser,
-  deleteUser
+  deleteUser,
+  resetUserPassword
 } from "../controller/user.controller.js";
 
 import { auth } from "../middleware/auth.middleware.js";
 import {
   isAdmin,
-  isPrincipal
+  isPrincipal,
+  allowRoles
 } from "../middleware/role.moddleware.js";
 
 const router = express.Router();
@@ -38,10 +40,16 @@ router.get("/me", auth, getMyProfile);
  */
 
 router.get("/users", auth, isAdmin, getUsersByRole);
-
 router.put("/users/:id", auth, isAdmin, updateUser);
-
 router.delete("/users/:id", auth, isAdmin, deleteUser);
+
+/**
+ * =======================================================
+ * SHARED MANAGEMENT ROUTES
+ * =======================================================
+ */
+
+router.put("/users/:id/reset-password", auth, allowRoles("admin", "principal", "teacher"), resetUserPassword);
 
 /**
  * =======================================================

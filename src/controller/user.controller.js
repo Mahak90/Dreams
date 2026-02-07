@@ -229,13 +229,63 @@ export const getUsersBySchool = async (req, res) => {
 // ADMIN → UPDATE USER
 // =======================================================
 export const updateUser = async (req, res) => {
-  const updated = await User.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
-  ).select("-password");
+  try {
+    const data = { ...req.body };
 
-  res.json({ success: true, updated });
+    // Handle password update if provided
+    if (data.password) {
+      data.visible_password = data.password;
+      data.password = await bcrypt.hash(data.password, 10);
+    }
+
+    const updated = await User.findByIdAndUpdate(
+      req.params.id,
+      data,
+      { new: true }
+    ).select("-password");
+
+    res.json({ success: true, updated });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// =======================================================
+// SHARED → RESET USER PASSWORD
+// =======================================================
+export const resetUserPassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({ message: "Password is required" });
+    }
+
+    // Hash and store
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        password: hashedPassword,
+        visible_password: password
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      success: true,
+      message: "Password reset successfully",
+      visible_password: password
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 // =======================================================
