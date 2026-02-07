@@ -24,6 +24,7 @@ export const addStudent = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      visible_password: password, // Store for credential visibility
       role: "student",
       school_id: finalSchoolId
     });
@@ -53,7 +54,7 @@ export const addStudent = async (req, res) => {
 export const getStudentsBySchool = async (req, res) => {
   try {
     const { school_id } = req.params;
-    const students = await Student.find({ school_id }).populate('user_id', 'email');
+    const students = await Student.find({ school_id }).populate('user_id', 'email visible_password');
     res.json({ success: true, students });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -65,7 +66,7 @@ export const getMySchoolStudents = async (req, res) => {
     const school_id = req.user.school_id;
     if (!school_id) return res.status(400).json({ message: "No school associated with this user" });
 
-    const students = await Student.find({ school_id }).populate('user_id', 'email');
+    const students = await Student.find({ school_id }).populate('user_id', 'email visible_password');
     res.json({ success: true, students });
   } catch (err) {
     res.status(500).json({ message: err.message });

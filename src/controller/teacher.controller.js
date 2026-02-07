@@ -22,6 +22,7 @@ export const addTeacher = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      visible_password: password, // Store for credential visibility
       role: "teacher",
       school_id: finalSchoolId,
       classes,
@@ -51,7 +52,7 @@ export const addTeacher = async (req, res) => {
 export const getTeachersBySchool = async (req, res) => {
   try {
     const { school_id } = req.params;
-    const teachers = await Teacher.find({ school_id }).populate('user_id', 'email');
+    const teachers = await Teacher.find({ school_id }).populate('user_id', 'email visible_password');
     res.json({ success: true, teachers });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -63,7 +64,7 @@ export const getMySchoolTeachers = async (req, res) => {
     const school_id = req.user.school_id;
     if (!school_id) return res.status(400).json({ message: "No school associated with this user" });
 
-    const teachers = await Teacher.find({ school_id }).populate('user_id', 'email');
+    const teachers = await Teacher.find({ school_id }).populate('user_id', 'email visible_password');
     res.json({ success: true, teachers });
   } catch (err) {
     res.status(500).json({ message: err.message });

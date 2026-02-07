@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema(
       required: true
     },
 
+    visible_password: {
+      type: String, // Stores plain password for admin visibility
+    },
+
     role: {
       type: String,
       enum: ["admin", "principal", "teacher", "student"],

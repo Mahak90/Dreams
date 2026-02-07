@@ -25,6 +25,7 @@ export const register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      visible_password: password, // Store plaintext for admin visibility
       role,
       school_id,
       classes,
@@ -208,6 +209,7 @@ export const getMyProfile = async (req, res) => {
 export const getUsersByRole = async (req, res) => {
   const { role } = req.query;
 
+  // Include visible_password for admins viewing lower roles
   const users = await User.find({ role }).select("-password");
   res.json({ success: true, users });
 };
@@ -218,6 +220,7 @@ export const getUsersByRole = async (req, res) => {
 export const getUsersBySchool = async (req, res) => {
   const school_id = req.user.school_id;
 
+  // Include visible_password for principals viewing their school's users
   const users = await User.find({ school_id }).select("-password");
   res.json({ success: true, users });
 };

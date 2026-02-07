@@ -5,7 +5,8 @@ const chapterSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String },
   videoLink: { type: String },
-  image: { type: String }
+  image: { type: String },
+  week: { type: Number } // For weekly planning
 });
 
 const syllabusSchema = new mongoose.Schema({
