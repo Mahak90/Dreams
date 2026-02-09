@@ -34,7 +34,12 @@ export const createSyllabus = async (req, res) => {
 
 export const getAllSyllabus = async (req, res) => {
   try {
-    const syllabusList = await Syllabus.find().sort({ class: 1, subject: 1 }).lean();
+    const { grade } = req.query;
+    const filter = {};
+    if (grade) {
+      filter.class = grade;
+    }
+    const syllabusList = await Syllabus.find(filter).sort({ class: 1, subject: 1 }).lean();
     res.json({ success: true, syllabusList: syllabusList || [] });
   } catch (error) {
     console.error("Error in getAllSyllabus:", error);

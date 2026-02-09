@@ -10,7 +10,7 @@ export const createSchool = async (req, res) => {
     const {
       school_name, board, medium, number_of_students,
       city, state, principal_name, principal_number, address,
-      principal_email, principal_password
+      pin_code, principal_email, principal_password
     } = req.body;
 
     // 1. Check if Principal Email is already registered
@@ -24,7 +24,8 @@ export const createSchool = async (req, res) => {
     // 2. Create School
     const school = await School.create({
       school_name, board, medium, number_of_students,
-      city, state, principal_name, principal_number, address
+      city, state, principal_name, principal_number, address,
+      pin_code
     });
 
     // 3. Create Principal User if credentials provided
@@ -62,7 +63,12 @@ export const createSchool = async (req, res) => {
 // =======================================================
 export const getAllSchools = async (req, res) => {
   try {
-    const schools = await School.find().lean();
+    const { state } = req.query;
+    const filter = {};
+    if (state) {
+      filter.state = { $regex: state, $options: "i" };
+    }
+    const schools = await School.find(filter).lean();
     console.log("Found schools count:", schools ? schools.length : 0);
 
     const formatted = (schools || []).map((s) => ({
@@ -75,6 +81,7 @@ export const getAllSchools = async (req, res) => {
       principal_name: s.principal_name,
       principal_number: s.principal_number,
       address: s.address,
+      pin_code: s.pin_code,
     }));
 
     res.json({ success: true, schools: formatted });

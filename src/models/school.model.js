@@ -36,6 +36,9 @@ const schoolSchema = new mongoose.Schema(
     },
     address: {
       type: String
+    },
+    pin_code: {
+      type: String
     }
   },
   { timestamps: true }

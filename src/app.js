@@ -43,7 +43,7 @@ app.use(
       "http://localhost:8080",
       "http://localhost:5173",
       "http://localhost:3001",
-      "https://dreamschools.in",      
+      "https://dreamschools.in",
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -68,6 +68,7 @@ import examRoute from "../src/routes/exam.route.js";
 import marksRoute from "../src/routes/marks.route.js";
 import syllabusRoute from "../src/routes/syllabus.route.js";
 import dashboardRoute from "../src/routes/dashboard.route.js";
+import analyticsRoute from "../src/routes/analytics.route.js";
 
 app.use("/api/v1/schools", schoolRoute);
 app.use("/api/v1/students", studentRoute);
@@ -79,6 +80,7 @@ app.use("/api/v1/exams", examRoute);
 app.use("/api/v1/marks", marksRoute);
 app.use("/api/v1/syllabus", syllabusRoute);
 app.use("/api/v1/dashboard", dashboardRoute);
+app.use("/api/v1/analytics", analyticsRoute);
 app.use("/api/v1", userRoute);
 app.use('/api/v1/master-lessons', masterLessonRoute);
 app.use("/api/v1/school-lessons", schoolLessonRoute);
